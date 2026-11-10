@@ -1,4 +1,4 @@
-package com.sah.game;
+package com.sah.game.records;
 
 import com.sah.game.gameenums.ColorType;
 import com.sah.game.gameenums.PromotionPiece;

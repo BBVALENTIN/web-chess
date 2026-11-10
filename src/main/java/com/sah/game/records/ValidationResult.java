@@ -1,4 +1,4 @@
-package com.sah.game;
+package com.sah.game.records;
 
 public record ValidationResult(Move move,
                                boolean isCapture,

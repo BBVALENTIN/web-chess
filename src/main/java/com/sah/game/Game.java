@@ -1,7 +1,6 @@
 package com.sah.game;
 
 import com.sah.config.AppConstants;
-import com.sah.dto.chess.*;
 import com.sah.game.dtos.MoveCoords;
 import com.sah.game.dtos.OMoveResult;
 import com.sah.game.exceptions.InvalidMoveException;
@@ -11,10 +10,10 @@ import com.sah.game.gameenums.ColorType;
 import com.sah.game.dtos.OCapturedPiece;
 import com.sah.game.gameenums.ErrorCodes;
 import com.sah.game.gameenums.Type;
+import com.sah.game.records.*;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,7 +25,7 @@ public class Game {
     private int halfMove, fullMove;
     private boolean isCheck, isCheckMate;
     private CastlingRights castlingRights;
-    private String fullPGN, currentFEN = AppConstants.startingFEN;
+    private String fullPGN, currentFEN = AppConstants.STARTING_FEN;
 
     private ColorType currentColor;
     private final MoveValidator validator;
@@ -96,11 +95,11 @@ public class Game {
         executor.execute(this, move, validationResult);
         ColorType opponent = opposite(currentColor);
         this.isCheck = situation.isInCheck(board, opponent);
-        this.isCheckMate = this.isCheck && situation.easyIsCheckmate(this.isCheck ,board, opponent, castlingRights);
+        this.isCheckMate = situation.IsCheckmate(this.isCheck ,board, opponent, castlingRights);
         currentColor = switchTurn(currentColor); // looks bad! IM BAD! IM REALLY REALLY BAD!
 
-        String currentPGN =pgnFromatter.format(move, oldBoard, this.isCheck, this.isCheckMate, validationResult.isCastling());
-        this.currentFEN = fenFormatter.formatMove(board, currentColor, castlingRights, halfMove ,fullMove);
+        String currentPGN = pgnFromatter.formatMove(new PgnData(move, oldBoard, this.isCheck, this.isCheckMate, validationResult.isCastling()));
+        this.currentFEN = fenFormatter.formatMove(new FenData(board, currentColor, castlingRights, halfMove ,fullMove));
         appendPGN(currentPGN);
         // for now
         return OMoveResult.builder()

@@ -1,51 +1,50 @@
 package com.sah.game.format;
 
-import com.sah.game.Board;
-import com.sah.game.Move;
 import com.sah.game.Piece;
 import com.sah.game.gameenums.Type;
+import com.sah.game.records.PgnData;
+import com.sah.interfaces.MoveFormatterInterface;
 
-public class Pgn {
+public class Pgn implements MoveFormatterInterface<PgnData> {
 
-    // fix PGN notation
-    public String format(Move move, Board boardBefore, boolean isCheck, boolean isCheckMate, boolean isCastling)
+    @Override
+    public String formatMove(PgnData req)
     {
-        if (isCastling) {
-            if (move.fromCol() < move.targetCol())
+        if (req.isCastling()) {
+            if (req.move().fromCol() < req.move().targetCol())
                 return "O-O";
             else
                 return "O-O-O";
         }
 
-        char pieceChar = Character.toUpperCase(getCharFromTip(move.pieceType()));
+        char pieceChar = Character.toUpperCase(getCharFromTip(req.move().pieceType()));
 
-        char colChar = (char) ('a' + move.targetCol());
-        int boardRow = 8 - move.targetRow();
+        char colChar = (char) ('a' + req.move().targetCol());
+        int boardRow = 8 - req.move().targetRow();
 
-        char fromColChar = (char) ('a' + move.fromCol());
-        int fromBoardRow = 8 - move.fromRow();
+        char fromColChar = (char) ('a' + req.move().fromCol());
+        int fromBoardRow = 8 - req.move().fromRow();
 
         String disambiguation = "";
-        if (move.pieceType() != Type.PAWN) {
+        if (req.move().pieceType() != Type.PAWN) {
             boolean sameFile = false;
             boolean sameRank = false;
             boolean ambiguous = false;
 
             for (int i = 0; i < 8; i++) {
                 for (int j = 0; j < 8; j++) {
-                    if (i == move.fromRow() && j == move.fromCol())
+                    if (i == req.move().fromRow() && j == req.move().fromCol())
                         continue;
 
-                    Piece p = boardBefore.at(i, j);
-                    if (p == null)
+                    Piece p = req.boardBefore().at(i, j); if (p == null)
                         continue;
 
-                    if (p.color == move.pieceColor() && p.type == move.pieceType()
-                            && boardBefore.canMove(i, j, move.targetRow(), move.targetCol())) {
+                    if (p.color == req.move().pieceColor() && p.type == req.move().pieceType()
+                            && req.boardBefore().canMove(i, j, req.move().targetRow(), req.move().targetCol())) {
                         ambiguous = true;
-                        if (j == move.fromCol()) sameRank = false;
-                        if (j == move.fromCol()) sameFile = true;
-                        if (i == move.fromRow()) sameRank = true;
+                        if (j == req.move().fromCol()) sameRank = false;
+                        if (j == req.move().fromCol()) sameFile = true;
+                        if (i == req.move().fromRow()) sameRank = true;
                     }
                 }
             }
@@ -61,12 +60,12 @@ public class Pgn {
             }
         }
 
-        boolean isPawnDiagonalMove = move.pieceType() == Type.PAWN && move.fromCol() != move.targetCol();
-        boolean isCapture = !boardBefore.isEmpty(move.targetRow(), move.targetCol()) || isPawnDiagonalMove;
+        boolean isPawnDiagonalMove = req.move().pieceType() == Type.PAWN && req.move().fromCol() != req.move().targetCol();
+        boolean isCapture = !req.boardBefore().isEmpty(req.move().targetRow(), req.move().targetCol()) || isPawnDiagonalMove;
 
         String notation;
 
-        if (move.pieceType() == Type.PAWN) {
+        if (req.move().pieceType() == Type.PAWN) {
             if (isCapture) {
                 notation = fromColChar + "x" + colChar + boardRow;
             } else {
@@ -80,28 +79,17 @@ public class Pgn {
             }
         }
 
-        if (move.promotion() != null) {
-            notation = notation + "=" + Character.toUpperCase(getCharFromTip(move.promotion().toType()));
+        if (req.move().promotion() != null) {
+            notation = notation + "=" + Character.toUpperCase(getCharFromTip(req.move().promotion().toType()));
         }
 
-        if (isCheck && !isCheckMate)
+        if (req.isCheck() && !req.isCheckMate())
             notation = notation + "+";
-        if (isCheckMate)
+        if (req.isCheckMate())
             notation = notation + "#";
 
         return notation;
     }
 
-     private char getCharFromTip(Type tip) {
-        return switch (tip) {
-            case PAWN -> 'p';
-            case KNIGHT -> 'n';
-            case BISHOP -> 'b';
-            case ROOK -> 'r';
-            case QUEEN -> 'q';
-            case KING -> 'k';
-            default -> ' ';
-        };
-    }
 
 }

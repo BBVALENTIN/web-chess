@@ -1,24 +1,24 @@
 package com.sah.game.format;
 
-import com.sah.config.AppConstants;
-import com.sah.game.Board;
-import com.sah.game.CastlingRights;
-import com.sah.game.Game;
+import com.sah.game.records.CastlingRights;
 import com.sah.game.Piece;
 import com.sah.game.gameenums.ColorType;
-import com.sah.game.gameenums.Type;
+import com.sah.game.records.FenData;
+import com.sah.interfaces.MoveFormatterInterface;
 import lombok.Getter;
 
 @Getter
-public class Fen {
-    public String formatMove(Board board, ColorType turn, CastlingRights castlingRights, int halfMove, int fullMove) {
+public class Fen implements MoveFormatterInterface<FenData> {
+
+    @Override
+    public String formatMove(FenData req){
         StringBuilder fen = new StringBuilder();
 
         for(int r = 0; r < 8; r++)
         {
             int emptySquares = 0;
             for(int c = 0; c < 8; c++) {
-                Piece p = board.at(r, c);
+                Piece p = req.board().at(r, c);
                 if (p == null) {
                     emptySquares++;
                 } else {
@@ -35,26 +35,12 @@ public class Fen {
             if(r < 7) fen.append("/");
         }
 
-        String t = (turn == ColorType.WHITE) ? "w" : "b";
+        String t = (req.turn() == ColorType.WHITE) ? "w" : "b";
         String enPassant = "-"; // for now;
-        String castling = generateCastlingRightsString(castlingRights);
+        String castling = generateCastlingRightsString(req.castlingRights());
 
-        String returnedFEN = String.format("%s %s %s %s %d %d",
-                fen.toString(), t, castling, enPassant, halfMove, fullMove);
-        return returnedFEN;
-    }
-
-
-    private char getCharFromTip(Type tip) {
-        return switch (tip) {
-            case PAWN -> 'p';
-            case KNIGHT -> 'n';
-            case BISHOP -> 'b';
-            case ROOK -> 'r';
-            case QUEEN -> 'q';
-            case KING -> 'k';
-            default -> ' ';
-        };
+        return String.format("%s %s %s %s %d %d",
+                fen.toString(), t, castling, enPassant, req.halfMove(), req.fullMove());
     }
 
     private String generateCastlingRightsString(CastlingRights rights)
