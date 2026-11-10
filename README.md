@@ -34,11 +34,11 @@ TWITCH_CLIENT_SECRET=<twitch_client_secret>
 npm install
 npm run build
 ```
-- Aditionally, you can the run the minifier, which parses and bundles every file with this naming *-index.ts.
+- Additionally, you can the run the minifier, which parses and bundles every file with this naming *-index.ts.
 ```bash
 npm run bundle
 ```
-4. Complie the scss files into css, the outdir by default is in src/main/resources/static/css
+4. Compile the scss files into css, the outdir by default is in src/main/resources/static/css
 ```bash
 npm run build:css
 ```
@@ -59,7 +59,7 @@ Their GitHub repository: [https://github.com/lila]
 
 This project uses stockfish.js from the official stockfish.js repository.
 
-Their Github repository: [https://github.com/lichess-org/stockfish.js]
+Their GitHub repository: [https://github.com/lichess-org/stockfish.js]
 
 Official Stockfish repository: [https://github.com/official-stockfish/stockfish]
 

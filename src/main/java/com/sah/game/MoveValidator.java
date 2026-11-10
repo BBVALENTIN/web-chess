@@ -31,7 +31,7 @@ public class MoveValidator {
             if (canCastle(board, move, p.color, castlingRights)) {
                 isCastling = true;
                 boolean kingSide = move.targetCol() > move.fromCol();
-                if(kingSide == true)
+                if(kingSide)
                     copyBoard.executeKingCastle(p.color);
                 else
                     copyBoard.executeQueenCastle(p.color);

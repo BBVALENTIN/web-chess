@@ -157,14 +157,16 @@ public class Board {
 
     public void executeKingCastle(ColorType color) {
         int kingRow = 0;
+        short kingTargetColumn = 6, kingFromColumn = 4;
+        short rookTargetColumn = 5, rookFromColumn = 7;
         if(color == ColorType.WHITE) {
              kingRow = 7;
         }
 
         Piece king = this.squares[kingRow][4];
         Piece smallCastleRook = this.squares[kingRow][7];
-        movePiece(kingRow, 4, 7, 6);
-        movePiece(kingRow, 7, 7, 5);
+        movePiece(kingRow, kingFromColumn, kingRow, kingTargetColumn);
+        movePiece(kingRow, rookFromColumn, kingRow, rookTargetColumn);
         // modify rights
     }
 
