@@ -1,7 +1,8 @@
 package com.sah.game;
 
-import com.sah.game.gameenums.ColorType;
 import com.sah.game.gameenums.Type;
+import com.sah.game.records.Move;
+import com.sah.game.records.ValidationResult;
 import lombok.AllArgsConstructor;
 
 /*

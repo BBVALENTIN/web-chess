@@ -4,6 +4,9 @@ import com.sah.game.exceptions.InvalidMoveException;
 import com.sah.game.gameenums.ColorType;
 import com.sah.game.gameenums.ErrorCodes;
 import com.sah.game.gameenums.Type;
+import com.sah.game.records.CastlingRights;
+import com.sah.game.records.Move;
+import com.sah.game.records.ValidationResult;
 
 import java.util.Optional;
 

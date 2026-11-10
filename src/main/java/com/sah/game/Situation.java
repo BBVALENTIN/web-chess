@@ -2,11 +2,12 @@ package com.sah.game;
 
 import com.sah.game.exceptions.InvalidMoveException;
 import com.sah.game.gameenums.ColorType;
-import com.sah.game.gameenums.ErrorCodes;
 import com.sah.game.gameenums.Type;
+import com.sah.game.records.CastlingRights;
+import com.sah.game.records.Move;
+import com.sah.game.records.Position;
+import com.sah.game.records.ValidationResult;
 
-import java.awt.*;
-import java.util.List;
 import java.util.Optional;
 
 
@@ -18,25 +19,24 @@ public class Situation {
     }
 
     public boolean isInCheck(Board board, ColorType kingColor) {
-        int[] kingPos = findKing(board, kingColor);
-        int kR = kingPos[0], kC = kingPos[1];
-
+        Position kingPosition;
+        if(kingColor == ColorType.BLACK)
+            kingPosition = board.blackKingPosition;
+        else
+            kingPosition = board.whiteKingPosition;
         for(int r = 0; r < 8; r++)
         {
             for(int c = 0; c < 8; c++) {
                 Piece attacker = board.at(r, c);
                 if(attacker == null || attacker.color == kingColor)
                     continue;
-                if(board.canAttack(r, c, kR, kC)) return true;
+                if(board.canAttack(r, c, kingPosition.row(), kingPosition.col())) return true;
             }
         }
         return false;
     }
-    public boolean isCheckmate(Board board, ColorType sideToMove, CastlingRights rights) {
-        return isInCheck(board, sideToMove) && !hasLegalMoves(board, sideToMove, rights);
-    }
 
-    public boolean easyIsCheckmate(boolean isCheck, Board board, ColorType sideToMove, CastlingRights rights)
+    public boolean IsCheckmate(boolean isCheck, Board board, ColorType sideToMove, CastlingRights rights)
     {
         return isCheck && !hasLegalMoves(board, sideToMove, rights);
     }
@@ -49,17 +49,6 @@ public class Situation {
 
 //    public boolean isDrawByRepetition(List<Long> positionHashes) {}
 //    public boolean insufficientMatingMaterial() {}
-
-
-    private int[] findKing(Board board, ColorType color) {
-        for(int r = 0; r < 8; r++)
-            for(int c = 0; c < 8; c++) {
-                Piece p = board.at(r, c);
-                if(p != null && p.type == Type.KING && p.color == color)
-                    return new int[]{r, c};
-            }
-        throw new IllegalStateException("King not found");
-    }
 
     private boolean hasLegalMoves(Board board, ColorType sideToMove, CastlingRights rights) {
         for(int r = 0; r < 8; r++) {

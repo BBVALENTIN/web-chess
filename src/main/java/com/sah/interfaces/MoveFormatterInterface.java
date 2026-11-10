@@ -2,7 +2,7 @@ package com.sah.interfaces;
 
 import com.sah.game.gameenums.Type;
 
-public interface MoveFormatter<T> {
+public interface MoveFormatterInterface<T> {
 
      default char getCharFromTip(Type tip) {
         return switch (tip) {

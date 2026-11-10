@@ -1,17 +1,21 @@
 package com.sah.game;
 
 import com.sah.config.AppConstants;
-import com.sah.game.dtos.MoveCoords;
 import com.sah.game.gameenums.ColorType;
 import com.sah.game.gameenums.Type;
+import com.sah.game.records.Position;
 import lombok.Getter;
+import org.springframework.security.core.parameters.P;
 
 @Getter
 public class Board {
     private final Piece[][] squares = new Piece[8][8];
 
+    public Position whiteKingPosition = AppConstants.whiteKingStartingPosition;
+    public Position blackKingPosition = AppConstants.blackKingStartingPosition;
+
     public Board() {
-        initializeFromFEN(AppConstants.startingFEN);
+        initializeFromFEN(AppConstants.STARTING_FEN);
     }
 
     public Board(String fen)
@@ -81,6 +85,13 @@ public class Board {
         squares[tR][tC] = piece;
         squares[fR][fC] = null;
         piece.moved = true;
+       if(piece.color == ColorType.BLACK && piece.type == Type.KING)
+       {
+           blackKingPosition = new Position(tR, tC);
+       } else if(piece.color == ColorType.WHITE && piece.type == Type.KING)
+       {
+           whiteKingPosition = new Position(tR, tC);
+       }
     }
 
     public boolean isPathClear(int fR, int fC, int tR, int tC)
